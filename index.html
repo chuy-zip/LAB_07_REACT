@@ -18,15 +18,38 @@
     <script type="text/babel"> 
 
     const App = () => {
+      
+      const [videogames, setVideogames] = React.useState([])
+
+      async function videogameApi(){
+        let gameList = await fetch('http://localhost:22107/posts')
+        let json_list = await gameList.json()
+
+        setVideogames(json_list)
+        console.log(json_list)
+      }
+
+      React.useEffect( () => {
+        videogameApi()
+      }, [])
+
       return (
-        <div className = "pressed">
-            Initial test
-        </div>
+        <div> 
+            <h1> Videogame Blog </h1>
+            <ul>
+                {videogames.map((game, index) => {
+                    return <li key={index} style={{ fontSize: '20px' }}>
+                        {game.title}
+                    </li>
+                })}
+            </ul>
+        </div> 
       )
     }
 
     const root = ReactDOM.createRoot(document.getElementById('root'))
     root.render(<App />)
+
     </script>
 </body>
 </html>

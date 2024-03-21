@@ -2,53 +2,157 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Button State Example</title>
+    <title>My favorite games Blog</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        .pressed { 
-            background-color: rgb(51, 93, 135);
-            color: rgb(255, 255, 255); 
-        }
     </style>
 </head>
 <body>
     <div id="root"></div>
     <script type="text/babel"> 
 
-    const App = () => {
-      
-      const [videogames, setVideogames] = React.useState([])
+        const bodyCSS = `
+            body {
+                margin: 0;
+                background-color: #152642;
+                overflow-y: hidden; 
+                background-image: url(img/back.jpg)
+            }
 
-      async function videogameApi(){
-        let gameList = await fetch('http://localhost:22107/posts')
-        let json_list = await gameList.json()
+        `;
 
-        setVideogames(json_list)
-        console.log(json_list)
-      }
+        const headerCSS = `
+            .headerContainer {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 100px;
+                padding-left: 20px;
+                width: 100%;
+                position: fixed;
+                top:0;
+                background-color: #091b33;
+                color: #dbdfde;
+                box-shadow: 0 -6px 10px 5px rgba(0,0,0,0.5);
+                z-index: 100;
+            }
+        `;
 
-      React.useEffect( () => {
-        videogameApi()
-      }, [])
+        const imgIconCSS = `
+            .clickableIcon {
+                margin: 10px;
+                width: 60px;
+            }
+        `;
 
-      return (
-        <div> 
-            <h1> Videogame Blog </h1>
-            <ul>
-                {videogames.map((game, index) => {
-                    return <li key={index} style={{ fontSize: '20px' }}>
-                        {game.title}
-                    </li>
-                })}
-            </ul>
-        </div> 
-      )
-    }
+        const gamesContainerCSS = `
+        .gamesContainer {
+                display: grid;
+                width: 70%;
+                background-color: rgba(80, 101, 128, 0.9);
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                grid-gap: 20px;
+                margin: auto;
+                margin-top: 100px; 
+                height: calc(100vh - 100px);
+                overflow-y: scroll; 
+            }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'))
-    root.render(<App />)
+            .gamesContainer::-webkit-scrollbar {
+                display: none;
+        `;
+
+        const gameCardContainerCSS = `
+            .gameCardContainer {
+                color: #000000;
+                background-color: #d7dada;
+                margin: 20px;
+                text-align: left;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+        `
+
+        let bodyStyle = document.createElement('style')
+        let headerStyle = document.createElement('style')
+        let iconStyle = document.createElement('style')
+        let gamesContainerStyle = document.createElement('style')
+        let gameCardContainerStyle = document.createElement('style')
+
+        bodyStyle.textContent = bodyCSS
+        headerStyle.textContent = headerCSS
+        iconStyle.textContent = imgIconCSS
+        gamesContainerStyle.textContent = gamesContainerCSS
+        gameCardContainerStyle.textContent = gameCardContainerCSS
+
+        document.head.appendChild(bodyStyle)
+        document.head.appendChild(headerStyle)
+        document.head.appendChild(iconStyle)
+        document.head.appendChild(gamesContainerStyle)
+        document.head.appendChild(gameCardContainerStyle)
+
+        function Games(){
+            return (<div className="gamesContainer">
+                <div className="gameCardContainer">Item 1</div>
+                <div className="gameCardContainer">Item 2</div>
+                <div className="gameCardContainer">Item 3</div>
+                <div className="gameCardContainer">Item 4</div>
+                <div className="gameCardContainer">Item 5</div>
+                </div>
+            );
+        }
+
+        function Icon({imgSrc}){
+            return (<figure>
+                    <a href = "https://github.com/chuy-zip/LAB_07_REACT">
+                        <img src={imgSrc} alt="Icon" className="clickableIcon" />
+                    </a> 
+                </figure>
+            );
+        }
+
+        function Header(){
+            return <div className="headerContainer">
+                    <h2>Videogame recommendations</h2> 
+                    <Icon imgSrc = {"img/gitIconDark.png"}/>                     
+                </div>
+        }
+
+        function App() {
+        
+            const [videogames, setVideogames] = React.useState([])
+
+            async function videogameApi(){
+                let gameList = await fetch('http://localhost:22107/posts')
+                let json_list = await gameList.json()
+
+                setVideogames(json_list)
+                console.log(json_list)
+            }
+
+            React.useEffect( () => {
+                videogameApi()
+            }, [])
+
+            return (
+                <div> 
+                    <Header />
+                    <Games />
+                    <ul>
+                        {videogames.map((game, index) => {
+                            return <li key={index} style={{ fontSize: '20px' }}>
+                                {game.title}
+                            </li>
+                        })}
+                    </ul>
+                </div> 
+            )
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'))
+        root.render(<App />)
 
     </script>
 </body>

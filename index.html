@@ -16,6 +16,7 @@
         const bodyCSS = `
             body {
                 margin: 0;
+                background-image: url("img/back6.jpg");
                 background-color: #152642;
                 overflow-y: hidden; 
             }
@@ -32,7 +33,7 @@
                 width: 100%;
                 position: fixed;
                 top:0;
-                background-color: #091b33;
+                background-color: #25244F;
                 color: #dbdfde;
                 box-shadow: 0 -6px 10px 5px rgba(0,0,0,0.5);
                 z-index: 100;
@@ -48,10 +49,9 @@
 
         const gamesContainerCSS = `
             .gamesContainer {
-                position: relative;
                 display: grid;
                 width: 70%;
-                background-color: rgba(80, 101, 128, 0.9);
+                background-color: rgba(68, 77, 136, 0.9);
                 grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
                 row-gap: 40px;
                 column-gap: 10px;
@@ -63,6 +63,11 @@
 
             .gamesContainer::-webkit-scrollbar {
                 display: none;
+            }
+            @media (max-width: 768px) {
+                .gamesContainer {
+                    row-gap: 10px;
+                }
             }
         `;
 
@@ -85,8 +90,8 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                color: #fff;
-                background-color: rgba(80, 101, 128, 1);
+                color: #dbdfde;
+                background-color: #2F3466;
                 border-top-left-radius: 10px; 
                 border-top-right-radius: 10px;
                 font-weight: bold;
@@ -126,19 +131,19 @@
         function GameProperties({mainPlatform, multiplayerSupport, onlineFeatures}){
 
             return (
-                <table style={{margin: 'auto', textAlign: 'center'}}>
+                <table style={{margin: 'auto', textAlign: 'center', paddingTop: '10px'}}>
                     <thead>
                         <tr>
-                            <th style={{ padding: '8px' }}>Platform</th>
-                            <th style={{ padding: '8px' }}>Multiplayer</th>
-                            <th style={{ padding: '8px' }}>Online</th>
+                            <th style={{ fontSize: '12px' }}>Platform</th>
+                            <th style={{ paddingLeft: '35px', paddingRight: '35px', fontSize: '12px' }}>Multiplayer</th>
+                            <th style={{ fontSize: '12px' }}>Online</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{mainPlatform}</td>
-                            <td >{multiplayerSupport ? 'Yes' : 'No'}</td>
-                            <td >{onlineFeatures ? 'Yes' : 'No'}</td>
+                            <td style={{ fontSize: '12px' }}>{mainPlatform}</td>
+                            <td style={{ fontSize: '12px' }}>{multiplayerSupport ? 'Yes' : 'No'}</td>
+                            <td style={{ fontSize: '12px' }}>{onlineFeatures ? 'Yes' : 'No'}</td>
                         </tr>
 
                     </tbody>
@@ -167,23 +172,28 @@
 
         }
 
-        function Games(){
-            return (<div className="gamesContainer">
-                <GameCard title={"The Binding of Isaac"} genre={"Adventure"} gameDescription={"This a test message for the game component"} mainPlatform={"Nintendo"} multiplayerSupport={1} onlineFeatures={0} />
-
-                <div className="gameCardContainer">Item 2</div>
-                <div className="gameCardContainer">Item 3</div>
-                <div className="gameCardContainer">Item 4</div>
-                <div className="gameCardContainer">Item 5</div>
-                <div className="gameCardContainer">Item 4</div>
-                <div className="gameCardContainer">Item 5</div>
+        function Games({ games }) {
+            return (
+                <div className="gamesContainer">
+                {games.map((game, index) => (
+                    <GameCard
+                    key={index}
+                    title={game.title}
+                    genre={game.genre}
+                    gameDescription={game.game_description}
+                    mainPlatform={game.main_platform}
+                    multiplayerSupport={game.multiplayer_support}
+                    onlineFeatures={game.online_features}
+                    />
+                ))}
                 </div>
             );
         }
 
-        function Icon({imgSrc}){
+
+        function Icon({imgSrc, url}){
             return (<figure>
-                    <a href = "https://github.com/chuy-zip/LAB_07_REACT">
+                    <a href = {url}>
                         <img src={imgSrc} alt="Icon" className="clickableIcon" />
                     </a> 
                 </figure>
@@ -193,7 +203,7 @@
         function Header(){
             return <div className="headerContainer">
                     <h1>Videogame recommendations</h1> 
-                    <Icon imgSrc = {"img/gitIconDark.png"}/>                     
+                    <Icon imgSrc = {"img/gitIconDark.png"} url ={"https://github.com/chuy-zip/LAB_07_REACT"}/>                     
                 </div>
         }
 
@@ -216,7 +226,7 @@
             return (
                 <div> 
                     <Header />
-                    <Games />
+                    <Games games={videogames}/>
                     <ul>
                         {videogames.map((game, index) => {
                             return <li key={index} style={{ fontSize: '20px' }}>

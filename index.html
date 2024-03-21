@@ -18,7 +18,6 @@
                 margin: 0;
                 background-color: #152642;
                 overflow-y: hidden; 
-                background-image: url(img/back.jpg)
             }
 
         `;
@@ -48,56 +47,134 @@
         `;
 
         const gamesContainerCSS = `
-        .gamesContainer {
+            .gamesContainer {
+                position: relative;
                 display: grid;
                 width: 70%;
                 background-color: rgba(80, 101, 128, 0.9);
                 grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                grid-gap: 20px;
+                row-gap: 40px;
+                column-gap: 10px;
                 margin: auto;
-                margin-top: 100px; 
-                height: calc(100vh - 100px);
-                overflow-y: scroll; 
+                margin-top: 100px;
+                overflow: auto;
+                height: calc(100vh - 100px);  
             }
 
             .gamesContainer::-webkit-scrollbar {
                 display: none;
+            }
         `;
+
 
         const gameCardContainerCSS = `
             .gameCardContainer {
-                color: #000000;
                 background-color: #d7dada;
-                margin: 20px;
                 text-align: left;
-                border-radius: 5px;
+                border-radius: 10px;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                width: 250px;
+                height: 300px;
+                margin: auto;
             }
-        `
+        `;
+
+        const cardHeaderCSS = `
+            .cardHeader {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                color: #fff;
+                background-color: rgba(80, 101, 128, 1);
+                border-top-left-radius: 10px; 
+                border-top-right-radius: 10px;
+                font-weight: bold;
+                padding-left: 10px;
+                height: 100px;
+                width: 240px;
+                
+            }
+
+            .cardHeader h2,
+            .cardHeader h4 {
+                margin: 10px; /* Remove margin for h3 and h5 */
+            }
+        `;
 
         let bodyStyle = document.createElement('style')
         let headerStyle = document.createElement('style')
         let iconStyle = document.createElement('style')
         let gamesContainerStyle = document.createElement('style')
         let gameCardContainerStyle = document.createElement('style')
+        let cardHeaderStyle = document.createElement('style')
 
         bodyStyle.textContent = bodyCSS
         headerStyle.textContent = headerCSS
         iconStyle.textContent = imgIconCSS
         gamesContainerStyle.textContent = gamesContainerCSS
         gameCardContainerStyle.textContent = gameCardContainerCSS
+        cardHeaderStyle.textContent = cardHeaderCSS
 
         document.head.appendChild(bodyStyle)
         document.head.appendChild(headerStyle)
         document.head.appendChild(iconStyle)
         document.head.appendChild(gamesContainerStyle)
         document.head.appendChild(gameCardContainerStyle)
+        document.head.appendChild(cardHeaderStyle)
+
+        function GameProperties({mainPlatform, multiplayerSupport, onlineFeatures}){
+
+            return (
+                <table style={{margin: 'auto', textAlign: 'center'}}>
+                    <thead>
+                        <tr>
+                            <th style={{ padding: '8px' }}>Platform</th>
+                            <th style={{ padding: '8px' }}>Multiplayer</th>
+                            <th style={{ padding: '8px' }}>Online</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{mainPlatform}</td>
+                            <td >{multiplayerSupport ? 'Yes' : 'No'}</td>
+                            <td >{onlineFeatures ? 'Yes' : 'No'}</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+            )
+
+        }
+
+        function GameCard({title, genre, gameDescription, mainPlatform, multiplayerSupport, onlineFeatures}){
+
+            return (
+                <div>
+                    <div className="gameCardContainer">
+                        <div className="cardHeader"> 
+                            <h2>{title}</h2>
+                            <h4>{genre}</h4>
+                        </div>
+                        <GameProperties mainPlatform={mainPlatform} multiplayerSupport={multiplayerSupport} onlineFeatures={onlineFeatures}/>
+                        <p style={{paddingLeft: '12px'}}> {gameDescription}</p>
+                    </div>
+                    
+                </div>
+            )
+
+
+        }
 
         function Games(){
             return (<div className="gamesContainer">
-                <div className="gameCardContainer">Item 1</div>
+                <GameCard title={"The Binding of Isaac"} genre={"Adventure"} gameDescription={"This a test message for the game component"} mainPlatform={"Nintendo"} multiplayerSupport={1} onlineFeatures={0} />
+
                 <div className="gameCardContainer">Item 2</div>
                 <div className="gameCardContainer">Item 3</div>
+                <div className="gameCardContainer">Item 4</div>
+                <div className="gameCardContainer">Item 5</div>
                 <div className="gameCardContainer">Item 4</div>
                 <div className="gameCardContainer">Item 5</div>
                 </div>
@@ -115,7 +192,7 @@
 
         function Header(){
             return <div className="headerContainer">
-                    <h2>Videogame recommendations</h2> 
+                    <h1>Videogame recommendations</h1> 
                     <Icon imgSrc = {"img/gitIconDark.png"}/>                     
                 </div>
         }

@@ -12,6 +12,37 @@
 <body>
     <div id="root"></div>
     <script type="text/babel"> 
+        
+        const loaderCSS = `
+            .loader {
+                width: 100px;
+                height: 40px;
+                --g: radial-gradient(farthest-side,#0000 calc(95% - 3px),#fff calc(100% - 3px) 98%,#0000 101%) no-repeat;
+                background: var(--g), var(--g), var(--g);
+                background-size: 30px 30px;
+                animation: l9 1s infinite alternate;
+            }
+            @keyframes l9 {
+                0% {
+                    background-position: 0 50%, 50% 50%, 100% 50%;
+                }
+                20% {
+                    background-position: 0 0, 50% 50%, 100% 50%;
+                }
+                40% {
+                    background-position: 0 100%, 50% 0, 100% 50%;
+                }
+                60% {
+                    background-position: 0 50%, 50% 100%, 100% 0;
+                }
+                80% {
+                    background-position: 0 50%, 50% 50%, 100% 100%;
+                }
+                100% {
+                    background-position: 0 50%, 50% 50%, 100% 50%;
+                }
+            }
+        `;
 
         const bodyCSS = `
             body {
@@ -33,7 +64,7 @@
                 width: 100%;
                 position: fixed;
                 top:0;
-                background-color: #25244F;
+                background-color: #25244F;  
                 color: #dbdfde;
                 box-shadow: 0 -6px 10px 5px rgba(0,0,0,0.5);
                 z-index: 100;
@@ -113,6 +144,7 @@
         let gamesContainerStyle = document.createElement('style')
         let gameCardContainerStyle = document.createElement('style')
         let cardHeaderStyle = document.createElement('style')
+        let loaderStyle = document.createElement('style')
 
         bodyStyle.textContent = bodyCSS
         headerStyle.textContent = headerCSS
@@ -120,6 +152,7 @@
         gamesContainerStyle.textContent = gamesContainerCSS
         gameCardContainerStyle.textContent = gameCardContainerCSS
         cardHeaderStyle.textContent = cardHeaderCSS
+        loaderStyle.textContent = loaderCSS
 
         document.head.appendChild(bodyStyle)
         document.head.appendChild(headerStyle)
@@ -127,6 +160,7 @@
         document.head.appendChild(gamesContainerStyle)
         document.head.appendChild(gameCardContainerStyle)
         document.head.appendChild(cardHeaderStyle)
+        document.head.appendChild(loaderStyle)
 
         function GameProperties({mainPlatform, multiplayerSupport, onlineFeatures}){
 
@@ -168,28 +202,25 @@
                     
                 </div>
             )
-
-
         }
 
         function Games({ games }) {
+
             return (
                 <div className="gamesContainer">
-                {games.map((game, index) => (
+                    {games.map((game, index) => (
                     <GameCard
-                    key={index}
-                    title={game.title}
-                    genre={game.genre}
-                    gameDescription={game.game_description}
-                    mainPlatform={game.main_platform}
-                    multiplayerSupport={game.multiplayer_support}
-                    onlineFeatures={game.online_features}
-                    />
-                ))}
+                        key={index}
+                        title={game.title}
+                        genre={game.genre}
+                        gameDescription={game.game_description}
+                        mainPlatform={game.main_platform}
+                        multiplayerSupport={game.multiplayer_support}
+                        onlineFeatures={game.online_features}
+                        />))}
                 </div>
             );
         }
-
 
         function Icon({imgSrc, url}){
             return (<figure>
@@ -207,35 +238,92 @@
                 </div>
         }
 
+        function Empty() {
+            return( 
+                <div className="gamesContainer">
+                <h1 style={{margin:'auto', color:'#dbdfde'}}>🌀 Currently we don't have recommended games</h1>; 
+                </div>    
+            )
+        }
+
+        function Loading() {
+            return( 
+                <div className="gamesContainer">
+                    <div className="loader" style={{margin:'auto'}}></div>
+                </div>    
+            )
+        }
+
+        function NoResponse() {
+            return( 
+                <div className="gamesContainer">
+                <h1 style={{margin:'auto', color:'#dbdfde'}}>🌀 Something went wrong... try again later</h1>; 
+                </div>    
+            )
+        }
+
         function App() {
+            const [videogames, setVideogames] = React.useState([]);
+            const [loading, setLoading] = React.useState(true);
+            const [error, setError] = React.useState(false);
+            const [isEmpty, setIsEmpty] = React.useState(false);
+            
+
+            async function videogameApi() {
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 2000));
         
-            const [videogames, setVideogames] = React.useState([])
-
-            async function videogameApi(){
-                let gameList = await fetch('http://localhost:22107/posts')
-                let json_list = await gameList.json()
-
-                setVideogames(json_list)
-                console.log(json_list)
+                    let gameList = await fetch('http://localhost:22107/posts');
+                    if (!gameList.ok) {
+                        throw new Error('Failed to fetch data');
+                    }
+                    let json_list = await gameList.json();
+                    setVideogames(json_list);
+                    setIsEmpty(json_list.length === 0);
+                } catch (error) {
+                    setError(true);
+                } finally {
+                    setLoading(false);
+                }
             }
 
-            React.useEffect( () => {
-                videogameApi()
-            }, [])
+            React.useEffect(() => {
+                videogameApi();
+            }, []);
+
+            if (loading) {
+                return (
+                    <div>
+                        <Header />
+                        <Loading />
+                    </div>
+                );
+            }
+
+            if (error) {
+                return (
+                    <div>
+                        <Header />
+                        <NoResponse />
+                    </div>
+                );
+            }
+
+            if (isEmpty) {
+                return (
+                    <div>
+                        <Header />
+                        <Empty />
+                    </div>
+                );
+            }
 
             return (
-                <div> 
+                <div>
                     <Header />
-                    <Games games={videogames}/>
-                    <ul>
-                        {videogames.map((game, index) => {
-                            return <li key={index} style={{ fontSize: '20px' }}>
-                                {game.title}
-                            </li>
-                        })}
-                    </ul>
-                </div> 
-            )
+                    <Games games={videogames} />
+                </div>
+            );
         }
 
         const root = ReactDOM.createRoot(document.getElementById('root'))

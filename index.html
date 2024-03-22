@@ -324,7 +324,9 @@
             return (
                 <div>
                     <Header />
-                    <Games games={videogames} />
+                    <React.Suspense fallback={<Loading />}>
+                        <Games games={videogames} />
+                    </React.Suspense>
                 </div>
             );
         }

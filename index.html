@@ -187,6 +187,7 @@
 
         }
 
+
         function GameCard({title, genre, gameDescription, mainPlatform, multiplayerSupport, onlineFeatures}){
 
             return (
@@ -203,6 +204,8 @@
                 </div>
             )
         }
+
+        
 
         function Games({ games }) {
 
@@ -257,7 +260,7 @@
         function NoResponse() {
             return( 
                 <div className="gamesContainer">
-                <h1 style={{margin:'auto', color:'#dbdfde'}}>🌀 Something went wrong... try again later</h1>; 
+                <h1 style={{textAlign:'center', color:'#dbdfde'}}>🌀 Something went wrong... try again later</h1>; 
                 </div>    
             )
         }
